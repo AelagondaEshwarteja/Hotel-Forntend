@@ -30,7 +30,7 @@ export function RoomOptionCard({ item, expanded, onToggle, onSelectRate }: Props
 
   return (
     <article className={`overflow-hidden rounded-2xl border bg-card shadow-sm transition-colors ${expanded ? "border-primary/50" : "border-border"}`}>
-      <div type="button" tabIndex={0} onClick={onToggle} onKeyDown={handleToggleKeyDown}  aria-expanded={expanded} className="w-full p-3 text-left">
+      <div  tabIndex={0} onClick={onToggle} onKeyDown={handleToggleKeyDown}  aria-expanded={expanded} className="w-full p-3 text-left">
         <div className="flex gap-3">
           {/* added from here  */}
            {image ? (
