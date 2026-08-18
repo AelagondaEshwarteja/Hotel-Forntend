@@ -1,11 +1,9 @@
 import type { PromoCode } from "../types/reviewTypes";
 
 /**
- * Ongoing promo codes shown on the review page. There's no promo-codes
- * endpoint in this mock backend yet, so this list is static; swap for a
- * `fetchPromoCodes()` call once that API exists. The "applied" code should
- * match a discount already reflected on the rate's pricing.total for the
- * numbers to make sense out of the box — everything else here is illustrative.
+ * Promo codes have no backing API in this project yet, so this list stays
+ * mock data by design. Hotel and rate data for the review page now come
+ * from the real fetchHotelContent / fetchHotelRates calls instead.
  */
 export const mockPromoCodes: PromoCode[] = [
   {

@@ -5,7 +5,9 @@ export function HomeHeader() {
   return (
     <header className="relative z-10 flex items-center justify-between gap-3 px-5 pt-[calc(1rem+env(safe-area-inset-top))]">
       <div className="flex items-center gap-2.5">
-
+        {/* <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">
+          H
+        </span> */}
         <div className="min-w-0">
           <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-primary-foreground/75">
             Good evening

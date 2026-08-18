@@ -33,8 +33,16 @@ export function AppHeader({ title, subtitle,  showBack = true,  }: AppHeaderProp
 					<h1 className="truncate text-lg font-bold">{title}</h1>
 					{subtitle ? <p className="mt-1 truncate text-xs font-medium text-muted-foreground">{subtitle}</p> : null}
 				</div>
-
-				
+{/* 
+				{rightContent ?? (
+					<button
+						type="button"
+						aria-label="More options"
+						className="flex size-11 shrink-0 items-center justify-center rounded-full bg-card text-foreground shadow-sm transition active:scale-95"
+					>
+						{showMenu ? <MoreVertical aria-hidden="true" className="size-5" /> : null}
+					</button>
+				)} */}
 			</div>
 		</header>
 	);

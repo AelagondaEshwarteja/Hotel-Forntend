@@ -36,6 +36,20 @@ export function HotelImageGallery({ images }: Props) {
           <Heart className={cn("size-4", favorite && "fill-primary text-primary")} />
         </button>
       </div>
+      {/* edit from here  */}
+      <div className="absolute bottom-4 left-4 flex items-center gap-1.5">
+  {images.map((_, index) => (
+    <span
+      key={index}
+      className={cn(
+        "rounded-full bg-background/60 transition-all duration-200",
+        activeIndex === index
+          ? "h-1.5 w-4 bg-background"
+          : "size-1.5"
+      )}
+    />
+  ))}
+</div>
 
       <span className="absolute bottom-4 right-4 rounded-full bg-foreground/75 px-3 py-1 text-xs font-bold text-background backdrop-blur">
         {Math.min(activeIndex + 1, images.length)} / {images.length}

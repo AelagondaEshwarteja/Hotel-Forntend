@@ -305,15 +305,6 @@ const HOTEL_SEEDS: HotelSeed[] = [
 const MOCK_HOTELS: HotelApiResult[] = HOTEL_SEEDS.map(buildHotel);
 
 /**
- * Synchronous lookup of a single hotel's list-card data by id, used by the
- * hotel-detail booking bar to show a "from" price without a network round trip.
- */
-export function getHotelListItemById(hotelId: string): HotelListItem | undefined {
-  const match = MOCK_HOTELS.find((hotel) => hotel.id === hotelId);
-  return match ? mapApiHotelToListItem(match) : undefined;
-}
-
-/**
  * Mock hotel search. In production this call filters server-side; here we
  * approximate that by matching the searched city and validate the shape
  * with the same schema the real API response would have to satisfy.
@@ -372,4 +363,10 @@ export function mapApiHotelToListItem(hotel: HotelApiResult): HotelListItem {
     reviewCount: hotel.reviewCount,
     distanceFromCentreKm: hotel.distanceFromCentreKm,
   };
+}
+
+/** Returns one flattened mock hotel by id for detail-page display data such as starting price. */
+export function getHotelListItemById(hotelId: string): HotelListItem | undefined {
+  const hotel = MOCK_HOTELS.find((item) => item.id === hotelId);
+  return hotel ? mapApiHotelToListItem(hotel) : undefined;
 }

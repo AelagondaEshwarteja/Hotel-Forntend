@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { differenceInCalendarDays, parseISO } from "date-fns";
+import { differenceInCalendarDays } from "date-fns";
 import { useMemo, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { queryKeys } from "../../../shared/api/queryKeys";
 import { AppHeader } from "../../../shared/components/AppHeader";
 import { ErrorState } from "../../../shared/components/ErrorState";
@@ -13,23 +13,21 @@ import { fetchHotelContent } from "../../hotelDetail/api/hotelDetailApi";
 import { useHotelSearchParams } from "../../hotelList/hooks/useHotelSearchParams";
 import { fetchHotelRates } from "../../roomSelection/api/roomSelectionApi";
 import { HotelStayCard } from "../components/HotelStayCard";
-// import { LoginPromoBanner } from "../components/LoginPromoBanner";
 import { PromoCodeSection } from "../components/PromoCodeSection";
 import { ReviewFooterBar } from "../components/ReviewFooterBar";
 import { RoomDetailsCard } from "../components/RoomDetailsCard";
 import { TariffDetailsCard } from "../components/TariffDetailsCard";
 import { mockPromoCodes } from "../data/mockReviewData";
-import { toReviewSummary, toStayContext } from "../utils/reviewTransform";
+import type { ReviewHotelContext } from "../types/reviewTypes";
+import { toReviewSummary } from "../utils/reviewTransform";
 
 export default function ReviewBookingPage() {
   const { hotelId = "" } = useParams();
-  const [searchParams] = useSearchParams();
-  const stayParams = useHotelSearchParams();
-  const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const ratePlanId = params.get("ratePlanId") ?? "";
+  const roomTypeId = params.get("roomTypeId") ?? "";
+  const search = useHotelSearchParams();
   const { message, showToast } = useToast();
-
-  const ratePlanId = searchParams.get("ratePlanId") ?? "";
-  const roomTypeId = searchParams.get("roomTypeId") ?? "";
 
   const contentQuery = useQuery({
     queryKey: queryKeys.hotelDetail(hotelId),
@@ -42,23 +40,43 @@ export default function ReviewBookingPage() {
     enabled: Boolean(hotelId),
   });
 
-  const rate = useMemo(
-    () => ratesQuery.data?.data.rates.find((item) => item.ratePlanId === ratePlanId && item.roomTypeId === roomTypeId),
-    [ratesQuery.data, ratePlanId, roomTypeId],
-  );
-
-  const nights = Math.max(1, differenceInCalendarDays(parseISO(stayParams.checkOut), parseISO(stayParams.checkIn)));
-  const stay = useMemo(() => toStayContext(stayParams, nights), [stayParams, nights]);
-
-  const baseSummary = useMemo(() => {
-    if (!contentQuery.data || !rate) return null;
-    return toReviewSummary(contentQuery.data, rate, stay);
-  }, [contentQuery.data, rate, stay]);
-
   const [appliedCode, setAppliedCode] = useState(mockPromoCodes.find((promo) => promo.applied)?.code ?? "");
 
+  const rate = useMemo(() => {
+    const rates = ratesQuery.data?.data.rates ?? [];
+    return rates.find((item) => item.ratePlanId === ratePlanId && item.roomTypeId === roomTypeId) ?? rates[0];
+  }, [ratesQuery.data, ratePlanId, roomTypeId]);
+
+  const hotelContext = useMemo<ReviewHotelContext | null>(() => {
+    if (!contentQuery.data) {
+      return null;
+    }
+    const nights = Math.max(1, differenceInCalendarDays(new Date(search.checkOut), new Date(search.checkIn)));
+    return {
+      name: contentQuery.data.name,
+      address: [contentQuery.data.address.addressLine, contentQuery.data.address.city]
+        .filter(Boolean)
+        .join(", "),
+      starRating: contentQuery.data.starRating,
+      checkIn: search.checkIn,
+      checkOut: search.checkOut,
+      nights,
+      rooms: search.rooms,
+      guests: search.adults + search.children,
+    };
+  }, [contentQuery.data, search]);
+
+  const baseSummary = useMemo(() => {
+    if (!rate || !hotelContext) {
+      return null;
+    }
+    return toReviewSummary(rate, hotelContext);
+  }, [rate, hotelContext]);
+
   const summary = useMemo(() => {
-    if (!baseSummary) return null;
+    if (!baseSummary) {
+      return null;
+    }
     const promo = mockPromoCodes.find((item) => item.code === appliedCode);
     const discountTotal = promo?.save ?? 0;
     const payableTotal = baseSummary.baseTotal + baseSummary.taxTotal + baseSummary.chargesTotal - discountTotal;
@@ -83,17 +101,16 @@ export default function ReviewBookingPage() {
   }
 
   function handleProceed() {
-  if (!summary) return;
-
- 
-}
+    showToast("Proceeding to guest details");
+  }
 
   if (contentQuery.isError || ratesQuery.isError) {
     return (
       <PageTransition>
+        <AppHeader title="Review Hotel Details" showMenu={false} />
         <ErrorState
-          title="Couldn't load this booking"
-          description="Something went wrong while fetching the hotel or rate details. Please try again."
+          title="Couldn't load your booking"
+          description="Something went wrong while fetching hotel and rate details. Please try again."
           actionLabel="Retry"
           onAction={() => {
             void contentQuery.refetch();
@@ -104,42 +121,27 @@ export default function ReviewBookingPage() {
     );
   }
 
-  if (contentQuery.isLoading || ratesQuery.isLoading || !contentQuery.data || !ratesQuery.data) {
+  if (contentQuery.isLoading || ratesQuery.isLoading || !summary) {
     return (
       <PageTransition>
-        <AppHeader title="Review Hotel Details" />
-        <div className="flex flex-col gap-4 px-4 pb-4">
+        <AppHeader title="Review Hotel Details" showMenu={false} />
+        <div className="space-y-4 px-4 pb-4">
           <Skeleton className="h-40" />
-          <Skeleton className="h-32" />
-          <Skeleton className="h-24" />
           <Skeleton className="h-48" />
-          <Skeleton className="h-40" />
+          <Skeleton className="h-56" />
         </div>
-      </PageTransition>
-    );
-  }
-
-  if (!summary) {
-    return (
-      <PageTransition>
-        <ErrorState
-          title="No rate plan selected"
-          description="We couldn't find the room and rate plan for this booking. Please pick a room again."
-          actionLabel="Back to room selection"
-          onAction={() => navigate(`/hotels/${hotelId}/rooms?${searchParams.toString()}`)}
-        />
       </PageTransition>
     );
   }
 
   return (
     <PageTransition>
-      <AppHeader title="Review Hotel Details" />
+      <AppHeader title="Review Hotel Details" showMenu={false} />
 
       <div className="flex flex-col gap-4 px-4 pb-4">
-        <HotelStayCard hotel={summary.hotel} stay={summary.stay} />
+        <HotelStayCard hotel={summary.hotel} />
         <RoomDetailsCard summary={summary} />
-        {/* <LoginPromoBanner onLoginClick={() => navigate("/profile")} /> */}
+
         <PromoCodeSection
           promoCodes={mockPromoCodes}
           appliedCode={appliedCode}

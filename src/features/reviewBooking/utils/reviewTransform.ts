@@ -1,7 +1,4 @@
-import type { HotelContentData } from "../../hotelDetail/types/hotelDetailTypes";
-import type { HotelSearchQueryParams } from "../../hotelList/types/hotelListTypes";
-import type { RoomRatePlan } from "../../roomSelection/types/roomSelectionTypes";
-import type { ReviewStayContext, ReviewSummary } from "../types/reviewTypes";
+import type { ReviewHotelContext, ReviewSummary, RoomRatePlan } from "../types/reviewTypes";
 
 const ECASH_RATE = 0.15;
 
@@ -9,17 +6,7 @@ function sum(values: number[]) {
   return values.reduce((total, value) => total + value, 0);
 }
 
-export function toStayContext(search: HotelSearchQueryParams, nights: number): ReviewStayContext {
-  return {
-    checkIn: search.checkIn,
-    checkOut: search.checkOut,
-    nights,
-    rooms: search.rooms,
-    guests: search.adults + search.children,
-  };
-}
-
-export function toReviewSummary(hotel: HotelContentData, rate: RoomRatePlan, stay: ReviewStayContext): ReviewSummary {
+export function toReviewSummary(rate: RoomRatePlan, hotel: ReviewHotelContext): ReviewSummary {
   const { total } = rate.pricing;
 
   const discountTotal = sum(total.discounts.map((discount) => discount.amount));
@@ -28,8 +15,6 @@ export function toReviewSummary(hotel: HotelContentData, rate: RoomRatePlan, sta
 
   return {
     hotel,
-    stay,
-    rate,
     roomName: rate.roomName,
     ratePlanName: rate.ratePlanName,
     inclusions: rate.inclusions,

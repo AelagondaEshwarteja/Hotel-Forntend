@@ -46,7 +46,7 @@ export function RoomDetailsCard({ summary }: RoomDetailsCardProps) {
           <p className="text-sm font-bold text-foreground">{summary.roomName}</p>
           <p className="mt-0.5 text-xs text-muted-foreground">{summary.ratePlanName}</p>
           <p className="mt-1.5 text-xs font-medium text-muted-foreground">
-            {summary.stay.rooms} {summary.stay.rooms === 1 ? "Room" : "Rooms"}, {summary.stay.guests} Guests
+            {summary.hotel.rooms} {summary.hotel.rooms === 1 ? "Room" : "Rooms"}, {summary.hotel.guests} Guests
           </p>
 
           {summary.roomsLeft <= 5 ? (

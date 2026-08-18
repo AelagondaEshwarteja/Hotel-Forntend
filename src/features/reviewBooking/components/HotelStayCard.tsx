@@ -1,17 +1,14 @@
 import { format, parseISO } from "date-fns";
 import { MapPin, Moon, Star } from "lucide-react";
-import type { HotelContentData } from "../../hotelDetail/types/hotelDetailTypes";
-import type { ReviewStayContext } from "../types/reviewTypes";
+import type { ReviewHotelContext } from "../types/reviewTypes";
 
 type HotelStayCardProps = {
-  hotel: HotelContentData;
-  stay: ReviewStayContext;
+  hotel: ReviewHotelContext;
 };
 
-export function HotelStayCard({ hotel, stay }: HotelStayCardProps) {
-  const checkIn = parseISO(stay.checkIn);
-  const checkOut = parseISO(stay.checkOut);
-  const address = [hotel.address.area, hotel.address.city, hotel.address.country].filter(Boolean).join(", ");
+export function HotelStayCard({ hotel }: HotelStayCardProps) {
+  const checkIn = parseISO(hotel.checkIn);
+  const checkOut = parseISO(hotel.checkOut);
 
   return (
     <section className="rounded-2xl border border-border bg-card p-4 shadow-sm">
@@ -19,7 +16,7 @@ export function HotelStayCard({ hotel, stay }: HotelStayCardProps) {
 
       <div className="mt-1 flex items-start gap-1 text-xs text-muted-foreground">
         <MapPin aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
-        <span>{address}</span>
+        <span>{hotel.address}</span>
       </div>
 
       <div className="mt-1.5 flex items-center gap-0.5">
@@ -32,25 +29,25 @@ export function HotelStayCard({ hotel, stay }: HotelStayCardProps) {
         <div>
           <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Check-In</p>
           <p className="mt-0.5 text-sm font-bold text-foreground">{format(checkIn, "EEE, d MMM")}</p>
-          <p className="text-xs text-muted-foreground">{hotel.checkIn}</p>
+          <p className="text-xs text-muted-foreground">2:00 PM</p>
         </div>
 
         <div className="flex flex-col items-center gap-1 px-2">
           <Moon aria-hidden="true" className="size-4 text-primary" />
           <span className="whitespace-nowrap text-[0.65rem] font-semibold text-muted-foreground">
-            {stay.nights} {stay.nights === 1 ? "Night" : "Nights"}
+            {hotel.nights} {hotel.nights === 1 ? "Night" : "Nights"}
           </span>
         </div>
 
         <div className="text-right">
           <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">Check-Out</p>
           <p className="mt-0.5 text-sm font-bold text-foreground">{format(checkOut, "EEE, d MMM")}</p>
-          <p className="text-xs text-muted-foreground">{hotel.checkOut}</p>
+          <p className="text-xs text-muted-foreground">11:00 AM</p>
         </div>
       </div>
 
       <p className="mt-3 text-xs font-medium text-muted-foreground">
-        {stay.rooms} {stay.rooms === 1 ? "Room" : "Rooms"}, {stay.guests} Guests
+        {hotel.rooms} {hotel.rooms === 1 ? "Room" : "Rooms"}, {hotel.guests} Guests
       </p>
     </section>
   );

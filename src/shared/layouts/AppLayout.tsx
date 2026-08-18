@@ -1,5 +1,5 @@
 import { CalendarCheck, CircleUserRound, Heart, Home } from "lucide-react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { BottomNavigation } from "../navigation/BottomNavigation";
 
 const navigationItems = [
@@ -10,12 +10,15 @@ const navigationItems = [
 ];
 
 export function AppLayout() {
+  const { pathname } = useLocation();
+  const isHotelFlowPage = /^\/hotels\/[^/]+(?:\/(?:rooms|review))?$/.test(pathname);
+
   return (
     <div className="min-h-dvh bg-background font-sans text-foreground">
-      <main className="mx-auto min-h-dvh w-full max-w-[430px] overflow-hidden bg-muted pb-[calc(5.75rem+env(safe-area-inset-bottom))] shadow-2xl">
+      <main className={isHotelFlowPage ? "mx-auto min-h-dvh w-full max-w-[430px] overflow-hidden bg-muted shadow-2xl" : "mx-auto min-h-dvh w-full max-w-[430px] overflow-hidden bg-muted pb-[calc(5.75rem+env(safe-area-inset-bottom))] shadow-2xl"}>
         <Outlet />
       </main>
-      <BottomNavigation items={navigationItems} />
+      {!isHotelFlowPage ? <BottomNavigation items={navigationItems} /> : null}
     </div>
   );
 }
