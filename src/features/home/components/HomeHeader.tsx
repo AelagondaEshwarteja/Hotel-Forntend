@@ -1,0 +1,32 @@
+import { MapPin, UserRound } from "lucide-react";
+import { Link } from "react-router-dom";
+
+export function HomeHeader() {
+  return (
+    <header className="relative z-10 flex items-center justify-between gap-3 px-5 pt-[calc(1rem+env(safe-area-inset-top))]">
+      <div className="flex items-center gap-2.5">
+
+        <div className="min-w-0">
+          <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-primary-foreground/75">
+            Good evening
+          </p>
+          <button
+            type="button"
+            className="flex items-center gap-1 text-sm font-bold text-primary-foreground"
+          >
+            <MapPin aria-hidden="true" className="size-3.5 shrink-0" />
+            <span className="truncate">Mumbai, India</span>
+          </button>
+        </div>
+      </div>
+
+      <Link
+        to="/profile"
+        aria-label="Open profile"
+        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-foreground/15 text-primary-foreground backdrop-blur transition active:scale-95"
+      >
+        <UserRound aria-hidden="true" className="size-5" />
+      </Link>
+    </header>
+  );
+}
