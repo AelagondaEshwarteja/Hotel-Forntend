@@ -13,7 +13,6 @@ import { fetchHotelContent } from "../../hotelDetail/api/hotelDetailApi";
 import { useHotelSearchParams } from "../../hotelList/hooks/useHotelSearchParams";
 import { fetchHotelRates } from "../../roomSelection/api/roomSelectionApi";
 import { HotelStayCard } from "../components/HotelStayCard";
-// import { LoginPromoBanner } from "../components/LoginPromoBanner";
 import { PromoCodeSection } from "../components/PromoCodeSection";
 import { ReviewFooterBar } from "../components/ReviewFooterBar";
 import { RoomDetailsCard } from "../components/RoomDetailsCard";
@@ -147,7 +146,6 @@ export default function ReviewBookingPage() {
       <div className="flex flex-col gap-4 px-4 pb-4">
         <HotelStayCard hotel={summary.hotel} stay={summary.stay} />
         <RoomDetailsCard summary={summary} />
-        {/* <LoginPromoBanner onLoginClick={() => navigate("/profile")} /> */}
         <PromoCodeSection
           promoCodes={mockPromoCodes}
           appliedCode={appliedCode}

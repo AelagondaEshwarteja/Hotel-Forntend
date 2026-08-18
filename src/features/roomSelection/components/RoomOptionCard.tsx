@@ -1,7 +1,8 @@
 import { AnimatePresence, m, useReducedMotion } from "framer-motion";
-import { BedDouble, ChevronDown, Snowflake, Users, Wifi } from "lucide-react";
+import { BedDouble, ChevronDown, Snowflake, Users, Wifi, ZoomIn } from "lucide-react";
 import { formatCurrency } from "../../../shared/utils/formatters";
 import type { RoomRatePlan, RoomWithRates } from "../types/roomSelectionTypes";
+import { useState } from "react";
 import { RoomRateCard } from "./RoomRateCard";
 
 type Props = { item: RoomWithRates; expanded: boolean; onToggle: () => void; onSelectRate: (rate: RoomRatePlan) => void };
@@ -17,12 +18,50 @@ export function RoomOptionCard({ item, expanded, onToggle, onSelectRate }: Props
   const fromPrice = rates.length ? Math.min(...rates.map((rate) => rate.pricing.perNight.price)) : undefined;
   const minRoomsLeft = rates.length ? Math.min(...rates.map((rate) => rate.roomsLeft)) : undefined;
   const image = room.images[0]?.url;
+  // added new feature here 
+  const [isImageEnlarged, setIsImageEnlarged] = useState(false);
+  const [selectedRatePlanId, setSelectedRatePlanId] = useState(rates[0]?.ratePlanId ?? null);
+  function handleToggleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onToggle();
+    }
+  }
 
   return (
     <article className={`overflow-hidden rounded-2xl border bg-card shadow-sm transition-colors ${expanded ? "border-primary/50" : "border-border"}`}>
-      <button type="button" onClick={onToggle} aria-expanded={expanded} className="w-full p-3 text-left">
+      <div  tabIndex={0} onClick={onToggle} onKeyDown={handleToggleKeyDown}  aria-expanded={expanded} className="w-full p-3 text-left">
         <div className="flex gap-3">
-          {image ? <img src={image} alt={room.images[0]?.caption || room.name} className={`shrink-0 rounded-xl object-cover ${expanded ? "h-24 w-28" : "size-20"}`} /> : null}
+          {/* added from here  */}
+           {image ? (
+            <m.button
+              type="button"
+              layout
+              onClick={(event) => {
+                event.stopPropagation();
+                setIsImageEnlarged((current) => !current);
+              }}
+              aria-label={isImageEnlarged ? "Shrink room photo" : "Enlarge room photo"}
+              aria-pressed={isImageEnlarged}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: "easeOut" }}
+              className={`relative shrink-0 overflow-hidden rounded-xl ${
+                isImageEnlarged ? "h-36 w-40" : expanded ? "h-24 w-28" : "size-20"
+              }`}
+            >
+              <img src={image} alt={room.images[0]?.caption || room.name} className="size-full object-cover" />
+              <span className="absolute bottom-1 right-1 flex size-5 items-center justify-center rounded-full bg-foreground/60 text-background">
+                <ZoomIn aria-hidden="true" className="size-3" />
+              </span>
+            </m.button>
+          ) : null}
+
+
+
+
+
+
+
+          {/* {image ? <img src={image} alt={room.images[0]?.caption || room.name} className={`shrink-0 rounded-xl object-cover ${expanded ? "h-24 w-28" : "size-20"}`} /> : null} */}
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <h2 className="text-sm font-bold leading-5">{room.name}</h2>
@@ -33,7 +72,7 @@ export function RoomOptionCard({ item, expanded, onToggle, onSelectRate }: Props
             {!expanded && fromPrice !== undefined ? <div className="mt-2 flex items-end justify-between gap-2"><div className="flex gap-2 text-[11px] text-muted-foreground"><span className="flex items-center gap-1"><Wifi className="size-3 text-primary" />Wi-Fi</span><span className="flex items-center gap-1"><Snowflake className="size-3 text-primary" />AC</span></div><div className="text-right"><p className="text-[10px] text-muted-foreground">From</p><p className="text-sm font-bold">{formatCurrency(fromPrice)}<span className="text-[10px] font-normal text-muted-foreground"> / night</span></p></div></div> : null}
           </div>
         </div>
-      </button>
+      </div>
 
       <AnimatePresence initial={false}>
         {expanded ? (
@@ -44,7 +83,17 @@ export function RoomOptionCard({ item, expanded, onToggle, onSelectRate }: Props
                 <span className="flex items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-secondary-foreground"><BedDouble className="size-3 text-primary" />{bedLabel(room.beds)}</span>
               </div>
               <div className="mt-3 flex items-center justify-between"><h3 className="text-sm font-bold">Rate Plans ({rates.length})</h3>{minRoomsLeft !== undefined ? <span className={`rounded-full px-2 py-1 text-[10px] font-bold ${minRoomsLeft <= 2 ? "bg-destructive/10 text-destructive" : "bg-secondary text-primary"}`}>{minRoomsLeft} min. left</span> : null}</div>
-              <div className="mt-2.5 space-y-2.5">{rates.map((rate, index) => <RoomRateCard key={rate.ratePlanId} rate={rate} recommended={index === 0} onSelect={onSelectRate} />)}</div>
+              <div className="mt-2.5 space-y-2.5">
+                {rates.map((rate, index) => <RoomRateCard
+                 key={rate.ratePlanId}
+                  rate={rate}
+                  isSelected = {selectedRatePlanId === rate.ratePlanId}
+                  isMostPreferred = {index === 0}
+                  onChoose={()=>setSelectedRatePlanId(rate.ratePlanId)}
+                  onSelect={onSelectRate}
+                   />
+                   )}
+                   </div>
             </div>
           </m.div>
         ) : null}

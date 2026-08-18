@@ -12,21 +12,33 @@ const navigationItems = [
 
 export function AppLayout() {
   const location = useLocation();
-  // Profile owns a full-screen layout for now (no persistent tab bar) while
-  // its sub-pages are still being designed. Revisit once those exist.
-  const hideBottomNav = location.pathname.startsWith("/profile");
+
+  // Hide bottom navigation on profile pages and hotel booking flow pages.
+  const isHotelFlowPage =
+    /^\/hotels\/[^/]+(?:\/(?:rooms|review|guest-details))?$/.test(
+      location.pathname,
+    );
+
+const hideBottomNav =
+  location.pathname.startsWith("/profile") ||
+  location.pathname === "/booking-success" ||
+  isHotelFlowPage;
 
   return (
     <div className="min-h-dvh bg-background font-sans text-foreground">
       <main
         className={cn(
           "mx-auto min-h-dvh w-full max-w-[430px] overflow-hidden bg-muted shadow-2xl",
-          !hideBottomNav && "pb-[calc(5.75rem+env(safe-area-inset-bottom))]",
+          !hideBottomNav &&
+            "pb-[calc(5.75rem+env(safe-area-inset-bottom))]",
         )}
       >
         <Outlet />
       </main>
-      {!hideBottomNav ? <BottomNavigation items={navigationItems} /> : null}
+
+      {!hideBottomNav ? (
+        <BottomNavigation items={navigationItems} />
+      ) : null}
     </div>
   );
 }
