@@ -83,10 +83,18 @@ export default function ReviewBookingPage() {
   }
 
   function handleProceed() {
-  if (!summary) return;
+    if (!summary) return;
 
- 
-}
+    navigate(`/hotels/${hotelId}/guest-details`, {
+      state: {
+        rooms: summary.stay.rooms,
+        nights: summary.stay.nights,
+        amount: summary.payableTotal,
+        hotelName: summary.hotel.name,
+        hotelEmail: summary.hotel.contact.email,
+      },
+    });
+  }
 
   if (contentQuery.isError || ratesQuery.isError) {
     return (

@@ -17,9 +17,8 @@ export function PromoCodeSection({ promoCodes, appliedCode, onSelect, onRemove }
   const [showAll, setShowAll] = useState(false);
 
   const applied = promoCodes.find((promo) => promo.code === appliedCode);
-  const otherCodes = promoCodes.filter((promo) => promo.code !== appliedCode);
-  const visibleCodes = showAll ? otherCodes : otherCodes.slice(0, COLLAPSED_COUNT);
-  const hiddenCount = otherCodes.length - visibleCodes.length;
+  const visibleCodes = showAll ? promoCodes : promoCodes.slice(0, COLLAPSED_COUNT);
+  const hiddenCount = promoCodes.length - visibleCodes.length;
 
   return (
     <section className="rounded-2xl border border-border bg-card p-4 shadow-sm">
@@ -50,10 +49,10 @@ export function PromoCodeSection({ promoCodes, appliedCode, onSelect, onRemove }
         </div>
       ) : null}
 
-      {otherCodes.length > 0 ? (
+      {promoCodes.length > 0 ? (
         <>
           <p className="mt-4 text-xs font-semibold text-muted-foreground">
-            {applied ? "or choose from below ongoing offers" : "Choose from below ongoing offers"}
+            {applied ? "Selected offer and other ongoing offers" : "Choose from below ongoing offers"}
           </p>
 
           <div className="mt-2 divide-y divide-border">
@@ -64,11 +63,14 @@ export function PromoCodeSection({ promoCodes, appliedCode, onSelect, onRemove }
                   key={promo.code}
                   type="button"
                   onClick={() => onSelect(promo.code)}
-                  className="flex w-full items-start gap-3 py-3 text-left transition active:bg-secondary"
+                  className={cn(
+                    "flex w-full items-start gap-3 rounded-lg py-3 text-left transition active:bg-secondary",
+                    isSelected ? "bg-secondary/55" : "",
+                  )}
                 >
                   <span
                     className={cn(
-                      "mt-0.5 flex size-[18px] shrink-0 items-center justify-center rounded-full border",
+                      "mt-0.5 flex size-4.5 shrink-0 items-center justify-center rounded-full border",
                       isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border",
                     )}
                   >
@@ -80,6 +82,11 @@ export function PromoCodeSection({ promoCodes, appliedCode, onSelect, onRemove }
                       <span className="rounded-md border border-dashed border-primary px-1.5 py-0.5 text-xs font-bold text-primary">
                         {promo.code}
                       </span>
+                      {isSelected ? (
+                        <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide text-primary">
+                          Selected
+                        </span>
+                      ) : null}
                       <span className="text-xs font-bold text-amber-600">Save {formatCurrency(promo.save)}</span>
                     </div>
                     <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{promo.description}</p>

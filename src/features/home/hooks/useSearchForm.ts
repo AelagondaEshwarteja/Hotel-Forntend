@@ -1,9 +1,9 @@
 import { addDays, differenceInCalendarDays } from "date-fns";
 import { useMemo, useState } from "react";
 import type { GuestsConfig } from "../types/homeTypes";
-
+import { MAX_ROOMS_PER_BOOKING } from "../../../shared/constants/booking";
 const MIN_ROOMS = 1;
-const MAX_ROOMS = 8;
+const MAX_ROOMS = MAX_ROOMS_PER_BOOKING;
 const MIN_ADULTS = 1;
 const MAX_ADULTS = 12;
 const MIN_CHILDREN = 0;

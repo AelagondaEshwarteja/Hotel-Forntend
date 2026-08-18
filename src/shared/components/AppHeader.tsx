@@ -10,7 +10,7 @@ type AppHeaderProps = {
 	showMenu?: boolean;
 };
 
-export function AppHeader({ title, subtitle,  showBack = true,  }: AppHeaderProps) {
+export function AppHeader({ title, subtitle, rightContent, showBack = true }: AppHeaderProps) {
 	const navigate = useNavigate();
 
 	return (
@@ -34,7 +34,7 @@ export function AppHeader({ title, subtitle,  showBack = true,  }: AppHeaderProp
 					{subtitle ? <p className="mt-1 truncate text-xs font-medium text-muted-foreground">{subtitle}</p> : null}
 				</div>
 
-				
+				{rightContent ? <div className="flex size-11 shrink-0 items-center justify-center">{rightContent}</div> : <span className="size-11 shrink-0" />}
 			</div>
 		</header>
 	);

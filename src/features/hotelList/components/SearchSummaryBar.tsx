@@ -19,7 +19,7 @@ export function SearchSummaryBar({ params }: SearchSummaryBarProps) {
   return (
     <header className="relative bg-muted px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] text-foreground">
 
-      <div className="relative z-10 flex items-center gap-3">
+      <div className="relative z-10 flex items-center justify-between gap-3">
         <button
           type="button"
           aria-label="Go back"
@@ -28,7 +28,12 @@ export function SearchSummaryBar({ params }: SearchSummaryBarProps) {
         >
           <ChevronLeft aria-hidden="true" className="size-5" />
         </button>
-        <p className="text-sm font-bold">Search results</p>
+
+        <div className="min-w-0 flex-1 text-center">
+          <p className="truncate text-sm font-bold">Search results</p>
+        </div>
+
+        <span className="size-10 shrink-0" />
       </div>
 
       <button

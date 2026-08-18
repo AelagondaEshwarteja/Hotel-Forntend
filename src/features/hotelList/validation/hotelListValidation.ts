@@ -1,5 +1,5 @@
 import { z } from "zod";
-
+import { MAX_ROOMS_PER_BOOKING } from "../../../shared/constants/booking";
 /**
  * Schemas below validate the raw hotel search API response.
  * Structure mirrors the API contract exactly (see hotelListTypes.ts).
@@ -116,7 +116,7 @@ export const HotelSearchQueryParamsSchema = z.object({
   city: z.string().trim().min(1, "Destination is required"),
   checkIn: z.string().trim().min(1, "Check-in date is required"),
   checkOut: z.string().trim().min(1, "Check-out date is required"),
-  rooms: z.coerce.number().int().min(1).max(8),
+  rooms: z.coerce.number().int().min(1).max(MAX_ROOMS_PER_BOOKING),
   adults: z.coerce.number().int().min(1).max(12),
   children: z.coerce.number().int().min(0).max(6),
 });

@@ -11,6 +11,7 @@ const HotelListPage = lazy(() => import("../../features/hotelList/pages/HotelLis
 const HotelDetailPage = lazy(() => import("../../features/hotelDetail/pages/HotelDetailPage"));
 const RoomSelectionPage = lazy(() => import("../../features/roomSelection/pages/RoomSelectionPage"));
 const ReviewBookingPage = lazy(() => import("../../features/reviewBooking/pages/ReviewBookingPage"));
+const GuestDetailsPage = lazy(() => import("../../features/guestDetails/pages/GuestDetailsPage"));
 const BookingsPage = lazy(() => import("../../features/bookings/pages/BookingsPage"));
 const WishlistPage = lazy(() => import("../../features/wishlist/pages/WishlistPage"));
 const ExamplePage = lazy(() => import("../../features/example/pages/ExamplePage"));
@@ -43,6 +44,7 @@ function AnimatedRoutes() {
           <Route path="hotels/:hotelId" element={<HotelDetailPage />} />
           <Route path="hotels/:hotelId/rooms" element={<RoomSelectionPage />} />
           <Route path="hotels/:hotelId/review" element={<ReviewBookingPage />} />
+          <Route path="hotels/:hotelId/guest-details" element={<GuestDetailsPage />} />
       
         </Route>
 
